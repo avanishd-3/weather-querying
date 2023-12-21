@@ -1,4 +1,4 @@
-# Weather-Querying
+# weather-querying
 Querying Nominatim and National Weather Service for weather information for any location in the U.S.
 
 The first thing the program does is read several lines of input that describe the job you want it to do. 
