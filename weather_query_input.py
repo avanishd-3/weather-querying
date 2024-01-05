@@ -102,13 +102,13 @@ def main() -> None | bool:
         try:
             if 'TEMPERATURE AIR' in command:
                 results_list.append(
-                    WeatherInfo.air_temp(weather_query_input_list[-3], int(weather_query_input_list[-2]),
-                                         weather_query_input_list[-1]))
+                    WeatherInfo.temp_or_wind(weather_query_input_list[-3], int(weather_query_input_list[-2]),
+                                             weather_query_input_list[-1], 'a'))
 
             elif 'TEMPERATURE FEELS' in command:
                 results_list.append(
-                    WeatherInfo.feels_like(weather_query_input_list[-3], int(weather_query_input_list[-2]),
-                                           weather_query_input_list[-1]))
+                    WeatherInfo.temp_or_wind(weather_query_input_list[-3], int(weather_query_input_list[-2]),
+                                             weather_query_input_list[-1], 'f'))
 
             elif 'HUMIDITY' in command:
                 results_list.append(WeatherInfo.humidity_or_precipitation(int(weather_query_input_list[-2]),
@@ -116,7 +116,8 @@ def main() -> None | bool:
 
             elif 'WIND' in command:
                 results_list.append(
-                    WeatherInfo.wind_speed(int(weather_query_input_list[-2]), weather_query_input_list[-1]))
+                    WeatherInfo.temp_or_wind('F', int(weather_query_input_list[-2]),
+                                             weather_query_input_list[-1], 'w'))  # F is default
 
             elif 'PRECIPITATION' in command:
                 results_list.append(WeatherInfo.humidity_or_precipitation(int(weather_query_input_list[-2]),
