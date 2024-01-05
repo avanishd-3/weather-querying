@@ -1,7 +1,7 @@
 # weather-querying
 
 Installation Instructions
-1. git clone avanishd-3/weather-querying
+1. git clone https://github.com/avanishd-3/weather-querying
 2. pip install -r requirements.txt
 
 
