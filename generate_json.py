@@ -76,7 +76,7 @@ def _query_apis(url: str, api_type: str) -> dict | bool:
                 time.sleep(1)  # Pause for 1 second b/c of Nominatim API rate limit
 
 
-class NominatimForwardFile:
+class File:
     def __init__(self, loc: str):
         self._loc = loc
 
@@ -92,22 +92,12 @@ class NominatimForwardAPI:
         self._loc = loc
 
     def return_info_obj(self) -> dict | bool:
-        """ Return dictionary representation of JSON response from Nominatim API for forward geocoding 
+        """ Return dictionary representation of JSON response from Nominatim API for forward geocoding
                    if successful
             If unsuccessful, return False to exit main program"""
         url = f'https://nominatim.openstreetmap.org/search?q={self._loc}&format=json'
 
-        return _query_apis(url, 'n')
-
-
-class NominatimReverseFile:
-    def __init__(self, loc: str):
-        self._loc = loc
-
-    def return_info_obj(self) -> dict | bool:
-        """ Return dictionary representation of json file for reverse geocoding if successful
-                If unsuccessful, return False to exit main program"""
-        return _return_dict_from_json_file(self._loc)
+        return _query_apis(url, 'n') # API type is Nominatim
 
 
 class NominatimReverseAPI:
@@ -124,17 +114,7 @@ class NominatimReverseAPI:
 
         url = f'https://nominatim.openstreetmap.org/reverse?format=json&lat={lat}&lon={lon}'
 
-        return _query_apis(url, 'n')
-
-
-class NWSFile:
-    def __init__(self, loc: str):
-        self._loc = loc
-
-    def return_info_obj(self) -> dict | bool:
-        """ Return dictionary representation of json file for NWS hourly data if successful
-                If unsuccessful, return False to exit main program"""
-        return _return_dict_from_json_file(self._loc)
+        return _query_apis(url, 'n')  # API type is Nominatim
 
 
 class NWSAPI:

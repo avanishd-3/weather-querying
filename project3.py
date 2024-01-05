@@ -47,7 +47,7 @@ def main() -> None | bool:
     results_list = []  # To store output to print
 
     if 'FILE' in target_input_list:
-        location_obj = generate_json.NominatimForwardFile(" ".join(target_input_list[2:])).return_info_obj()
+        location_obj = generate_json.File(" ".join(target_input_list[2:])).return_info_obj()
         try:
             FileForwardGeoCoding = get_data_from_json.ForwardGeocoding(location_obj).return_location()
         except TypeError:
@@ -69,7 +69,7 @@ def main() -> None | bool:
     weather_input_list = weather_input.split(" ")
 
     if 'FILE' in weather_input_list:
-        weather_obj = generate_json.NWSFile(" ".join(weather_input_list[2:])).return_info_obj()
+        weather_obj = generate_json.File(" ".join(weather_input_list[2:])).return_info_obj()
         try:
             WeatherInfo = get_data_from_json.WeatherQuery(weather_obj)
         except TypeError:
@@ -130,7 +130,7 @@ def main() -> None | bool:
     reverse_geocoding_input_list = reverse_geocoding_input.split(" ")
 
     if 'FILE' in reverse_geocoding_input:
-        reverse_location_obj = (generate_json.NominatimReverseFile(" ".join(reverse_geocoding_input_list[2:])).
+        reverse_location_obj = (generate_json.File(" ".join(reverse_geocoding_input_list[2:])).
                                 return_info_obj())
 
         try:
