@@ -11,7 +11,7 @@ Second line of input:
    a. WEATHER NWS -> use the National Weather Service API to obtain hourly weather forecasts.
    b. WEATHER FILE path -> path is the path to a file stored locally, containing the result of a previous call to the National Weather Service's API for obtaining an hourly weather forecast
 
-Other lines -> Soecify weather query
+Other lines -> Specify weather query
 
    a. TEMPERATURE AIR scale length limit -> air temperature
       scale: F or C

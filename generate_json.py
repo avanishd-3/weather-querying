@@ -41,7 +41,7 @@ def _return_dict_from_json_file(loc: str) -> dict | bool:
 
 def _query_apis(url: str, api_type: str) -> dict | bool:
     """ Return dictionary representation of API Query if successful
-            If unsuccessful, return False to exit main program"""
+        If unsuccessful, return False to exit main program"""
 
     response = None
 
@@ -97,7 +97,7 @@ class NominatimForwardAPI:
             If unsuccessful, return False to exit main program"""
         url = f'https://nominatim.openstreetmap.org/search?q={self._loc}&format=json'
 
-        return _query_apis(url, 'n') # API type is Nominatim
+        return _query_apis(url, 'n')  # API type is Nominatim
 
 
 class NominatimReverseAPI:
