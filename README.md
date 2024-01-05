@@ -1,4 +1,10 @@
 # weather-querying
+
+Installation Instructions
+1. git clone avanishd-3/weather-querying
+2. pip install -r requirements.txt
+
+
 Querying Nominatim and National Weather Service for weather information for any location in the U.S.
 
 The first thing the program does is read several lines of input that describe the job you want it to do. 

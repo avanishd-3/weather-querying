@@ -1,7 +1,6 @@
-import urllib.request
-import urllib.error
 import json
 import time
+import requests
 
 
 """"
@@ -43,37 +42,34 @@ def _query_apis(url: str, api_type: str) -> dict | bool:
     """ Return dictionary representation of API Query if successful
         If unsuccessful, return False to exit main program"""
 
-    response = None
-
     try:
         if api_type == 'n':
-            hdr = {'Referer': 'adavulur'}  # Nominatim Header
+            headers = {'Referer': 'adavulur'}  # Nominatim Header
         else:
-            hdr = {'User-Agent': 'adavulur@uci.edu', 'Accept': 'application/geo+json'}  # NWS Header
+            headers = {'User-Agent': 'adavulur@uci.edu', 'Accept': 'application/geo+json'}  # NWS Header
 
-        request = urllib.request.Request(url, headers=hdr)
-        response = urllib.request.urlopen(request)  # Open URL and read response
-        return json.load(response)
-    except urllib.error.HTTPError as e:
+        request = requests.get(url, headers=headers)
+        request.raise_for_status()  # Check for status error
+
+        return request.json()
+    except requests.exceptions.HTTPError:
         print("FAILED")
-        print(f'{e.code} {url}')
+        print(f'{request.status_code} {url}')
         print("NOT 200")
         return False  # Exit main program w/o sys.exit(0)
-    except urllib.error.URLError:
+    except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
         print("FAILED")
         print(url)
         print("NETWORK")
         return False  # Exit main program w/o sys.exit(0)
-    except json.decoder.JSONDecodeError:
+    except requests.exceptions.JSONDecodeError:
         print("FAILED")
         print(f'200 {url}')
         print("FORMAT")
         return False  # Exit main program w/o sys.exit(0)
     finally:
-        if response is not None:
-            response.close()
-            if api_type == 'n':
-                time.sleep(1)  # Pause for 1 second b/c of Nominatim API rate limit
+        if api_type == 'n':
+            time.sleep(1)  # Pause for 1 second b/c of Nominatim API rate limit
 
 
 class File:
