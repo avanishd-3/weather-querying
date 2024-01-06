@@ -7,8 +7,6 @@ Installation Instructions
 
 Querying Nominatim and National Weather Service for weather information for any location in the U.S.
 
-The first thing the program does is read several lines of input that describe the job you want it to do. 
-
 First line of input (choose 1):
 1. TARGET NOMINATIM location -> location is any arbitrary, non-empty string describing the target location
 2. TARGET FILE path -> path is the path to a file stored locally, containing the result of a previous call to Nominatim

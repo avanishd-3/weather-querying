@@ -21,9 +21,8 @@ def _return_dict_from_json_file(loc: str) -> dict | bool:
         If unsuccessful, return False to exit main program"""
 
     try:
-        info = open(loc, 'r')
-        info_obj = json.load(info)
-        info.close()
+        with open(loc, "r") as info:
+            info_obj = json.load(info)
     except FileNotFoundError:
         print("FAILED")
         print(loc)
