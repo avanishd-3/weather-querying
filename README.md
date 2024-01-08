@@ -14,6 +14,7 @@ First line of input (choose 1):
 Second line of input (choose 1):
 1. WEATHER API -> use the Open Meteo API to obtain hourly weather forecasts.
 2. WEATHER FILE path -> path is the path to a file stored locally, containing the result of a previous call to the National Weather Service's API for obtaining an hourly weather forecast
+   1. Note this only works for locations inside the U.S.
 
 Other lines -> Specify weather query
 
