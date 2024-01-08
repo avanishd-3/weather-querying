@@ -5,14 +5,14 @@ Installation Instructions
 2. pip install -r requirements.txt
 
 
-Querying Nominatim and National Weather Service for weather information for any location in the U.S.
+Querying Nominatim and Open Meteo for weather information for any location on Earth.
 
 First line of input (choose 1):
 1. TARGET NOMINATIM location -> location is any arbitrary, non-empty string describing the target location
 2. TARGET FILE path -> path is the path to a file stored locally, containing the result of a previous call to Nominatim
 
 Second line of input (choose 1):
-1. WEATHER NWS -> use the National Weather Service API to obtain hourly weather forecasts.
+1. WEATHER API -> use the Open Meteo API to obtain hourly weather forecasts.
 2. WEATHER FILE path -> path is the path to a file stored locally, containing the result of a previous call to the National Weather Service's API for obtaining an hourly weather forecast
 
 Other lines -> Specify weather query
@@ -34,9 +34,4 @@ Other lines -> Specify weather query
 5. PRECIPITATION length limit -> hourly chance of precipitation reported as a percentage
       1. length: number of hours into the future for which the query is being made
       2. limit: MAX or MIN
-
-Continue reading weather queries until input line is NO MORE QUERIES
-
-Final line of input (choose 1):
-1. REVERSE NOMINATIM -> use Nominatim API to do reverse geocoding (determine a description of where the nearest weather station is located based on latitude and longitude)
-2. REVERSE FILE path -> use a file stored locally containing the results of previous calls to Nominatim's reverse geocoding API instead
+6. NO MORE QUERIES -> stop entering weather queries

@@ -22,3 +22,11 @@ def convert_to(temp: float, unit: str) -> float:
         return (temp-32)*5/9  # Temperature in Celsius
     else:
         return (temp*9/5) + 32  # Temperature in Fahrenheit
+
+
+def convert_to_us(val: float, type: str) -> float:
+    """ Convert temperature and wind speed to F and mph from C and kph"""
+    if type == 'air temp' or type == 'feels like temp':
+        return (val*9/5) + 32
+    else:
+        return val * 0.6213711922

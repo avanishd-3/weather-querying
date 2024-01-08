@@ -2,6 +2,11 @@ import json
 import time
 import requests
 
+import openmeteo_requests
+
+import requests_cache
+import pandas as pd
+from retry_requests import retry
 
 """"
 Interface
@@ -37,20 +42,19 @@ def _return_dict_from_json_file(loc: str) -> dict | bool:
         return info_obj
 
 
-def _query_apis(url: str, api_type: str) -> dict | bool:
+def _query_apis(url: str, api_type: str, *params: dict) -> dict | list | bool:
     """ Return dictionary representation of API Query if successful
         If unsuccessful, return False to exit main program"""
 
     try:
         if api_type == 'n':
             headers = {'Referer': 'adavulur'}  # Nominatim Header
-        else:
-            headers = {'User-Agent': 'adavulur@uci.edu', 'Accept': 'application/geo+json'}  # NWS Header
 
-        request = requests.get(url, headers=headers)
-        request.raise_for_status()  # Check for status error
+            request = requests.get(url, headers=headers)
+            request.raise_for_status()  # Check for status error
 
-        return request.json()
+            return request.json()
+
     except requests.exceptions.HTTPError:
         print("FAILED")
         print(f'{request.status_code} {url}')
@@ -112,24 +116,55 @@ class NominatimReverseAPI:
         return _query_apis(url, 'n')  # API type is Nominatim
 
 
-class NWSAPI:
+class OpenMeteoAPI:
     def __init__(self, loc: str):
         self._loc = loc
 
-    def return_weather_object(self) -> dict | bool:
+    def return_weather_object(self) -> pd.DataFrame | bool:
         """ Return dictionary representation of JSON response from NWS API if successful
             If unsuccessful, return False to exit main program"""
         loc_list = self._loc.split(" ")
         lat = loc_list[0]
         lon = loc_list[-1]
 
-        query_loc_url = f'https://api.weather.gov/points/{lat},{lon}'
-        loc_info = _query_apis(query_loc_url, 'w')  # Get location info for NWS grid
+        # Set up the Open-Meteo API client with cache and retry on error
+        cache_session = requests_cache.CachedSession('.cache', expire_after=3600)
+        retry_session = retry(cache_session, retries=5, backoff_factor=0.2)
+        openmeteo = openmeteo_requests.Client(session=retry_session)
 
-        grid_id = loc_info['properties']['gridId']
-        grid_x = loc_info['properties']['gridX']
-        grid_y = loc_info['properties']['gridY']
+        url = "https://api.open-meteo.com/v1/forecast"
 
-        final_query_url = f'https://api.weather.gov/gridpoints/{grid_id}/{grid_x},{grid_y}/forecast/hourly/?units=us'
+        params = {
+            "latitude": lat,
+            "longitude": lon,
+            "hourly": ["temperature_2m", "relative_humidity_2m", "apparent_temperature",
+                       "precipitation_probability", "wind_speed_10m"],
+            "timezone": "auto",
+            "forecast_days": 16
+        }
 
-        return _query_apis(final_query_url, 'w')
+        responses = openmeteo.weather_api(url, params=params)
+
+        response = responses[0]
+
+        # Process hourly data. The order of variables needs to be the same as requested.
+        hourly = response.Hourly()
+        hourly_temperature_2m = hourly.Variables(0).ValuesAsNumpy()
+        hourly_relative_humidity_2m = hourly.Variables(1).ValuesAsNumpy()
+        hourly_apparent_temperature = hourly.Variables(2).ValuesAsNumpy()
+        hourly_precipitation_probability = hourly.Variables(3).ValuesAsNumpy()
+        hourly_wind_speed_10m = hourly.Variables(4).ValuesAsNumpy()
+
+        hourly_data = {"date": pd.date_range(
+            start=pd.to_datetime(hourly.Time(), unit="s"),
+            end=pd.to_datetime(hourly.TimeEnd(), unit="s"),
+            freq=pd.Timedelta(seconds=hourly.Interval()),
+            inclusive="left"
+        ), "temperature_2m": hourly_temperature_2m, "relative_humidity_2m": hourly_relative_humidity_2m,
+            "apparent_temperature": hourly_apparent_temperature,
+            "precipitation_probability": hourly_precipitation_probability,
+            "wind_speed_10m": hourly_wind_speed_10m}
+
+        hourly_dataframe = pd.DataFrame(data=hourly_data)
+
+        return hourly_dataframe

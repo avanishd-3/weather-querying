@@ -1,4 +1,7 @@
 import statistics
+
+import pandas as pd
+
 import temperature_formulas
 import time_conversion
 
@@ -17,6 +20,54 @@ class ForwardGeocoding:
         longitude = f'{longitude_float}/E' if longitude_float > 0 else f'{-longitude_float}/W'
 
         return f'{latitude} {longitude}'
+
+
+
+class OpenMeteoQuery:
+
+    def __init__(self, weather_obj: pd.DataFrame):
+        self.weather_obj = weather_obj
+
+    def return_info(self, *scale: str, length: int, limit: str, query_type: str):
+
+        match query_type:
+            case 'air temp':
+                index_str = 'temperature_2m'
+            case 'feels like temp':
+                index_str = 'apparent_temperature'
+            case 'wind speed':
+                index_str = 'wind_speed_10m'
+            case 'humidity':
+                index_str = 'relative_humidity_2m'
+            case 'precipitation':
+                index_str = 'precipitation_probability'
+            case _:
+                index_str = 'temperature_2m'
+
+        range_limit = length if length < len(self.weather_obj.index) else len(self.weather_obj.index)
+
+        new_hourly_dataframe = self.weather_obj.head(range_limit)
+
+        match limit:
+            case 'MAX':
+                idx = new_hourly_dataframe.idxmax()[index_str]
+                row = new_hourly_dataframe.iloc[idx]
+
+            case 'MIN':
+                idx = new_hourly_dataframe.idxmin()[index_str]
+                row = new_hourly_dataframe.iloc[idx]
+
+            case _:
+                row = new_hourly_dataframe.iloc[0]
+
+        match query_type:
+            case 'humidity' | 'precipitation':
+                return f"{row['date']} {row[index_str]:.4f}%"
+            case _:
+                if scale == 'F' or scale == 'I':
+                    return f"{row['date']} {temperature_formulas.convert_to_us(row[index_str], query_type):.4f}"
+                else:
+                    return f"{row['date']} {row[index_str]:.4f}"
 
 
 class WeatherQuery:

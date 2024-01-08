@@ -1,1 +1,5 @@
 requests~=2.31.0
+openmeteo_requests~=1.1.0
+pandas~=2.1.4
+requests-cache~=1.1.1
+retry-requests~=2.0.0
