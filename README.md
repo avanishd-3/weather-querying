@@ -3,6 +3,7 @@
 Installation Instructions
 1. git clone https://github.com/avanishd-3/weather-querying
 2. pip install -r requirements.txt
+3. Run weather_query_input.py
 
 
 Querying Nominatim and Open Meteo for weather information for any location on Earth.
